@@ -1,0 +1,146 @@
+% !TeX root = main.tex
+% !TeX spellcheck = fa_IR
+\chapter{کدها}
+
+
+ممکن است مایل باشید بخشی از کدهای توسعه داده شده برای انجام پروژه را در یک پیوست گزارش کنید. برای این منظور بهتر توضیحات مختصری از کارکرد کد ارائه دهید. سپس یا استفاده از بستهٔ 
+\lr{listings} 
+کد را بیاورید. چند روش برای درج کد در متن هست. روش اول درج کد در متن فایل تک و روش دوم ارجاع به فایل اصلی کد است. به ترتیب مثالی از هر دو روش را اینجا می‌آوریم. در اینجا عمدا فونت کد کوچک انتخاب شده و فاصله خطوط کم شده تا کد فضای زیادی از 
+\thesis 
+را اشغال نکند.
+
+\section{عنوان کد}
+توضیحات مختصر از نحوه کامپایل و اجرای کد و تنظیم پارامترهای اصلی را اینجا بنویسید. فرمت فایل‌های ورودی و خروجی برنامه را مشخص کنید. سپس کد را اضافه کنید. می‌توانید به کد ارجاع هم بدهید. برای مثال
+\ref{lst:mat1}.
+
+\definecolor{MyDarkGreen}{rgb}{0.0, 0.52, 0.0}
+\lstset{language=matlab,                     % Use MATLAB
+  frame=single,                              % Single frame around code
+  basicstyle=\footnotesize,                  % Use small font
+  breaklines=true,                           % sets automatic line breaking
+  keywordstyle=[1]\color{blue}\bfseries,     % MATLAB functions bold and blue
+  keywordstyle=[2]\color{purple},            % MATLAB function arguments purple
+  keywordstyle=[3]\color{blue}\underbar,     % User functions underlined and blue
+  identifierstyle=,                          % Nothing special about identifiers
+  commentstyle=\color{MyDarkGreen}
+               \footnotesize,                % Comments small dark green courier
+  stringstyle=\color{purple},                % Strings are purple
+  showstringspaces=false,                    % Don't put marks in string spaces
+  tabsize=4,                                 % 4 spaces per tab
+  morekeywords={xlim,ylim,var,alpha,normcdf  % Put standard MATLAB functions not included 
+                factorial,poissrnd,normpdf}, % in the default language in following line
+  morekeywords=[2]{on, off, interp},         % Put MATLAB function parameters here
+  morekeywords=[3]{MyFunc},                  % Put user defined functions here
+  numbers=left,                              % Line numbers on left
+  firstnumber=1,                             % Line numbers start with line 1
+  numberstyle=\tiny\color{blue},             % Line numbers are blue
+  stepnumber=5,                              % Line numbers go in steps of 5
+  escapeinside={(*@}{@*)},                   % Insert LaTeX inside code
+  inputencoding=utf8,                        % Enable UTF-8 encoding for text
+  extendedchars=true,
+  literate={🄯}{{
+  \begin{tikzpicture}[baseline=(X.base)]
+          \node[draw,circle,inner sep=0pt] (X) {\textsf{C}};
+  \end{tikzpicture}%
+  }}1                                        % Map copyleft to TikZ
+}
+%\lstset{language=C++,                        % Use C++
+%  frame=single,                              % Single frame around code
+%  basicstyle=\footnotesize,                  % Use small font
+%  breaklines=true,                           % Enable line breaking
+%  keywordstyle=[1]\color{blue}\bfseries,     % C++ keywords bold and blue
+%  keywordstyle=[2]\color{purple},            % C++ parameters purple
+%  keywordstyle=[3]\color{blue}\underbar,     % User-defined functions underlined and blue
+%  identifierstyle=,                          % Nothing special for identifiers
+%  commentstyle=\color{MyDarkGreen}
+%               \footnotesize,                % Comments in small dark green font
+%  stringstyle=\color{purple},                % Strings in purple
+%  showstringspaces=false,                    % Do not mark spaces in strings
+%  tabsize=4,                                 % Tabs are equivalent to 4 spaces
+%  morekeywords={std, cout, cin, string, 
+%                vector},                     % Add C++ specific functions and classes
+%  morekeywords=[2]{public, private, class},  % Add C++ modifiers
+%  morekeywords=[3]{myFunction},              % Add user-defined functions
+%  numbers=left,                              % Line numbers on left
+%  firstnumber=1,                             % Start line numbers from 1
+%  numberstyle=\tiny\color{blue},             % Line numbers in tiny blue font
+%  stepnumber=5,                              % Line number increments by 5
+%  escapeinside={(*@}{@*)},                   % Insert LaTeX inside code
+%  inputencoding=utf8,                        % Enable UTF-8 encoding for text
+%  extendedchars=true,
+%  literate={🄯}{{
+%    \begin{tikzpicture}[baseline=(X.base)]
+%      \node[draw,circle,inner sep=0.4pt] (X) {\scalebox{-1}[1]{\ttfamily\normalfont C}};
+%    \end{tikzpicture}%
+%  }}1                                        % Map copyleft to TikZ
+%}
+%\lstset{language=Python,                     % Use Python
+%  frame=single,                              % Single frame around code
+%  basicstyle=\footnotesize,                  % Use small font
+%  breaklines=true,                           % Enable line breaking
+%  keywordstyle=[1]\color{blue}\bfseries,     % Python keywords bold and blue
+%  keywordstyle=[2]\color{purple},            % Python parameters purple
+%  keywordstyle=[3]\color{blue}\underbar,     % User-defined functions underlined and blue
+%  identifierstyle=,                          % Nothing special for identifiers
+%  commentstyle=\color{MyDarkGreen}
+%               \footnotesize,                % Comments in small dark green font
+%  stringstyle=\color{purple},                % Strings in purple
+%  showstringspaces=false,                    % Do not mark spaces in strings
+%  tabsize=4,                                 % Tabs are equivalent to 4 spaces
+%  morekeywords={import, def, return, lambda, 
+%                yield},                      % Add Python specific functions
+%  morekeywords=[2]{self, cls, args},         % Add Python function arguments
+%  morekeywords=[3]{my_func},                 % Add user-defined functions
+%  numbers=left,                              % Line numbers on left
+%  firstnumber=1,                             % Start line numbers from 1
+%  numberstyle=\tiny\color{blue},             % Line numbers in tiny blue font
+%  stepnumber=5,                              % Line number increments by 5
+%  escapeinside={(*@}{@*)},                   % Insert LaTeX inside code
+%  inputencoding=utf8,                        % Enable UTF-8 encoding for text
+%  extendedchars=true,
+%  literate={🄯}{{
+%    \begin{tikzpicture}[baseline=(X.base)]
+%      \node[draw,circle,inner sep=0.4pt] (X) {\scalebox{-1}[1]{\ttfamily\normalfont C}};
+%    \end{tikzpicture}%
+%  }}1                                        % Map copyleft to TikZ
+%}
+
+
+\begin{latin}
+\setstretch{0.9} % Space between lines
+\begin{lstlisting}[caption={\small\rl{
+نمونه‌ای از کد که داخل فایل تِک درج شده است.}}, 
+label={lst:mat1}]
+s = 0;
+for i = 1 : 100
+    s = s + i;
+end
+MyFunc(s)
+\end{lstlisting}
+
+\lstinputlisting[caption={\small\rl{
+نمونه‌ای از کد مطلب (\lr{MATLAB}) که از فایل جداگانه‌ای برداشته می‌شود.}}, 
+label={lst:mat2}]{code.m}
+\end{latin}
+
+همچنان که می‌بینید در خط $13$ و $14$ کد 
+\ref{lst:mat2} 
+حروف یونانی در بخش کامنت کد گنجانده شده است. به ترتیب مشابه کد شما می‌تواند شامل حروف فارسی باشد. در نسخه‌های جدید بی‌دی سازگاری با بسته 
+\lr{listings} 
+افزایش یافته است و کلمه فارسی قابل نمایش است. اما هنوز این بسته با حروف چینی یک جمله کامل فارسی مشکل دارد. هرچند این بدان معنی نیست که هیچ راهی برای داشتن کامنت فارسی طولانی در کدتان ندارید.
+
+ممکن است مایل باشید در خطوط توضیحات%
+\LTRfootnote{comments} 
+کد از روش فرمول نویسی لاتِک استفاده کنید. کافیست گزینهٔ 
+\lr{$\backslash$\texttt{mathescape=true}} 
+را به مجموعه شرایط محیط 
+\lr{lstlisting}
+اضافه کنید. برای روشن شدن موضوع در ادامه یک مثال با این روش درج شده است، با توجه به سازگاری با لاتک اینجا از قلم زیباتری برای نمایش رابطه استفاده شده است.
+
+\begin{latin}
+\fontfamily{lmtt}
+\begin{lstlisting}[mathescape=true,title={\small\rl{
+نمونه‌ای از کد که شامل رابطهٔ ریاضی با الگوی تِک است.}}]
+s = alpha^2; % s = \alpha^2 between dollers appears as $s = \alpha^2$
+\end{lstlisting}
+\end{latin}
