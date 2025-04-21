@@ -1,6 +1,6 @@
 % !TeX spellcheck = fa_IR
 % !TeX TS-program = xelatex
-% Template based on IASBS Thesis, Version 2.37, Date: 2025/04/14
+% Template based on IASBS Thesis, Version 2.40, Date: 2025/04/21
 % بسته به اینکه مقصود شما رساله دکتری، پایان‌نامه ارشد یا پیشنهاد پروژه است یکی از خطوط زیر را فعال کنید.
 % علاوه بر گزینه‌های زیر می‌توانید از سایر گزینه‌های سازگار با سبک report شامل 10pt، 11pt و غیره نیز استفاده کنید.
 %\documentclass[a4paper,12pt,twoside,openright,phd,review]{iasbs-thesis}
@@ -34,11 +34,16 @@
 %\subfield{Financial Mathematics}{ریاضیات مالی}
 
 
-\title{The Template of Theses at}{
-الگوی پایان‌نامه‌ها در}
-\subtitle{the Institute for Advanced Studies in Basic Sciences (IASBS)}{
-دانشگاه تحصیلات تکمیلی علوم‌پایه زنجان}
+\title{The Template of Theses}{
+الگوی پایان‌نامه‌ها}
+\subtitle{at the Institute for Advanced Studies in Basic Sciences}{
+در دانشگاه تحصیلات تکمیلی علوم‌پایه زنجان}
 %\subsubtitle{Subsubtitle of the Thesis}{دنبالهٔ عنوان طولانی}
+\subsubtitle{Undergraduate Project Report, Master's Thesis, and Doctoral Dissertation}{
+گزارش پروژهٔ کارشناسی، پایان‌نامه کارشناسی ارشد، و رسالهٔ دکتری}
+
+% به صورت پیش‌فرض عنوان کوتاه که بالای صفحات زوج نمایش داده می‌شود معادل بخش اصلی عنوان است. اما اگر انتخاب دیگری دارید می‌توانید خط زیر را فعال کنید و عنوان کوتاه را تغییر دهید.
+%\shorttitle{الگوی پایان‌نامه‌ها در دانشگاه}
 \author{Name and Surname}{
 نام و نام‌خانوادگی نویسنده}
 
@@ -53,7 +58,7 @@
 
 \date{\latintoday}{\today}
 % تاریخ حقیقی برگزاری جلسه دفاع را با یکی از دو فرمت زیر وارد و جایگزین خط بالا کنید.
-%\date{month day, year}{روز ماه سال} 
+%\date{month day, year}{روز ماه سال}
 %\date{month year}{ماه سال}
 
 
@@ -69,22 +74,22 @@
 \keywords{keyword 1, keyword 2, keyword3, ...}{
 کلمه کلیدی ۱، کلمه کلیدی ۲، کلیمه کلیدی ۳، ...}
 
-% خطوط زیر را متناسب با شرایط صفحه امضای کمیته داوری فعال یا غیرفعال و اصلاح کنید. 
+% خطوط زیر را متناسب با شرایط صفحه امضای کمیته داوری فعال یا غیرفعال و اصلاح کنید.
 % به‌تناسب واژهٔ 'مرتبه` با یکی از موارد استادیار/دانشیار/استاد جایگزین شود.
 % در صورت لزوم نام دانشکده یا دانشگاه را وارد یا تصحیح کنید.
 % به تناسب قبل از نام‌ها از واژه دکتر/استاد استفاده کنید.
-% اگر نام و نام خانوادگی اعضای کمیته طولانی است می‌توانید بخش میانی نام‌ها یا واژه‌های 
-% "Intenal/External/International" 
-% را به‌صورت 
-% "Intnl./Ext./Intl." 
+% اگر نام و نام خانوادگی اعضای کمیته طولانی است می‌توانید بخش میانی نام‌ها یا واژه‌های
+% "Intenal/External/International"
+% را به‌صورت
+% "Intnl./Ext./Intl."
 % مخفف بنویسید.
 % Replace the term 'Rank' with one of the options: Assistant Professor, Associate Professor, or Professor.
 % Enter or correct the name of the faculty or university if necessary.
-% Use the titles Dr./Prof. before names as appropriate. 
-% If the full name of the committee members is lengthy, you may abbreviate the middle parts of the name or 
+% Use the titles Dr./Prof. before names as appropriate.
+% If the full name of the committee members is lengthy, you may abbreviate the middle parts of the name or
 % shorten the words "Internal/External/Interational" to "Intnl./Ext./Intl.".
 \committeemember{Name and Surname}{Supervisor}{Rank, Department of Physics}{
-نام و نام خانوادگی}{استاد راهنما}{مرتبه - دانشکدهٔ فیزیک} 
+نام و نام خانوادگی}{استاد راهنما}{مرتبه - دانشکدهٔ فیزیک}
 \committeemember{Name and Surname}{Supervisor}{Rank, Department of Physics}{
 نام و نام خانوادگی}{استاد راهنما}{مرتبه - دانشکدهٔ فیزیک}
 \committeemember{Name and Surname}{Advisor}{Rank, Department of Physics}{
@@ -110,7 +115,7 @@
 \studentid{14xxyyzzzz}
 \nationalid{0123456789}
 
-%فهرست نماد‌ها برای پایان‌نامه‌هایی که تعداد زیادی کمیت با نمادهای مشابه در آن استفاده شده است ضروری است. برای مثال اگر در یک پایان‌نامه دو کمیت شتاب و اندازه سطح که نشانۀ کوتاه شده مشابهی برایشان انتخاب می‌شود به ترتیب با a و A نمایش داده شده باشند، وجود فهرستی برای مراجعه سریع به نمادها برای رفع ابهام ضروری خواهد بود. دقت کنید به هیچ وجه اجازه ندارید در طول یک پایان‌نامه دو کمیت متفاوت را با یک نشانۀ کوتاه شده یکسان بیاورید، ولو در دو فصل متفاوت. نمادها را می‌توانید ب دستور 
+%فهرست نماد‌ها برای پایان‌نامه‌هایی که تعداد زیادی کمیت با نمادهای مشابه در آن استفاده شده است ضروری است. برای مثال اگر در یک پایان‌نامه دو کمیت شتاب و اندازه سطح که نشانۀ کوتاه شده مشابهی برایشان انتخاب می‌شود به ترتیب با a و A نمایش داده شده باشند، وجود فهرستی برای مراجعه سریع به نمادها برای رفع ابهام ضروری خواهد بود. دقت کنید به هیچ وجه اجازه ندارید در طول یک پایان‌نامه دو کمیت متفاوت را با یک نشانۀ کوتاه شده یکسان بیاورید، ولو در دو فصل متفاوت. نمادها را می‌توانید ب دستور
 %\addsymbolslist{symbol}{description}
 %به فهرست نمادها اضافه کنید. اگر می‌خواهید فهرست نمادها دو ستونه شود خط زیر را فعال کنید.
 %\twocolumnsybolslist
@@ -153,15 +158,16 @@
 
 % Apendix of the Thesis ------------------------------------
 \appendix
-\include{appendix_1} 
+\include{appendix_1}
 \include{appendix_2}
 \include{appendix_3}
+\include{appendix_4}
 
 
 % References -----------------------------------------------
 
 %\bibliographystyle{unsrt-fa}
-\bibliographystyle{ieeetr-fa} % For Department of Physics 
+\bibliographystyle{ieeetr-fa} % For Department of Physics
 %\bibliographystyle{plainnat-fa} % For Department of Mathematics
 %\bibliographystyle{asa-fa} % For Department of Mathematics
 
