@@ -1,7 +1,7 @@
-%% File: `iasbs-thesis.cls', Version 2.37
+%% File: `iasbs-thesis.cls', Version 2.40
 %%
-%% This document class is designed based of xepersian v25.0 
-%% for academic theses at the Institute for Advanced Studies 
+%% This document class is designed based of xepersian v25.0
+%% for academic theses at the Institute for Advanced Studies
 %% in Basic Sciences (IASBS).
 %%
 %% ______________________________________________
@@ -14,8 +14,8 @@
 %%
 %% If you encounter any errors or bugs while using this class,
 %% please inform me via email: m.d.niry@iasbs.ac.ir
-%% To help identify and resolve the problem, try to create a 
-%% simplified case where other parts of the thesis are removed, 
+%% To help identify and resolve the problem, try to create a
+%% simplified case where other parts of the thesis are removed,
 %% and send it to me. I would also greatly appreciate any
 %% suggestions to improve this class and make it more user-
 %% friendly for students. Feel free to share your feedback or
@@ -23,7 +23,7 @@
 %%
 %%
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{iasbs-thesis}[2025/04/14 v2.37
+\ProvidesPackage{iasbs-thesis}[2025/04/21 v2.40
   IASBS Thesis document class in XeLaTeX]
 \DeclareOption*{ % Handle all options
   \PassOptionsToClass{\CurrentOption}{report}
@@ -71,11 +71,12 @@
 \xspaceaddexceptions{، ؛ \LTRfootnote}
 \RequirePackage{xecolour, xcolor, listings}
 \RequirePackage{listingsutf8} % Enable UTF-8 support for listings
-\usepackage[small]{caption} % Use small font size for cation.
+\RequirePackage[small]{caption} % Use small font size for caption.
 \RequirePackage{tabularx} % Same as tabular* environment, but modifies the widths of columns.
 \RequirePackage{array,hhline,multirow} % For advanced table formating
 \RequirePackage{etoolbox} % For advanced macro processing
 \RequirePackage{verbatim}
+\RequirePackage{pdfpages} % Include the pdf pages inside a latex file.
 % Requirments of the easyReview package --------------------
 \let\comment\texcomment % The easyReview redefines \comment, so let save the definition of the verbatim as \texcomment
 \RequirePackage{easyReview} % for \comment, \alert, \remove, \highlight and \replace command which are useful in draft mode
@@ -141,23 +142,24 @@
 \newcommand{\initstyle}{ % This must be the final command executed before the begin document.
   \typeout{Initialize the document class and thesis style.}
   \typeout{The XePersian package and the zref-perpage package are being loaded.}
-  \usepackage[extrafootnotefeatures]{xepersian}
+  \RequirePackage[extrafootnotefeatures]{xepersian}
   \twocolumnfootnotes
-  \usepackage{zref-perpage}
+  \RequirePackage{zref-perpage}
   \zmakeperpage{footnote} % restart footnote index in every pages
 
   \typeout{The XePersian package will load the fonts.}
   \settextfont[Scale=1.07]{XB Niloofar}[Script=Persian] % Use this line with the new version of xepersian (v23.3).
-  \IfFontExistsTF{Times New Roman}{ % Select Latin font
-    \setlatintextfont[Scale=1.05]{Times New Roman}}{
-    \IfFontExistsTF{DejaVu Serif}{
-      \setlatintextfont[Scale=1.03]{DejaVu Serif}}{
+  \IfFontExistsTF{DejaVu Serif}{ % Select Latin font
+    \setlatintextfont[Scale=1.03]{DejaVu Serif}}{
+    \IfFontExistsTF{Times New Roman}{
+      \setlatintextfont[Scale=1.05]{Times New Roman}}{
       \IfFontExistsTF{Liberation Serif}{
         \setlatintextfont[Scale=1.06]{Liberation Serif}}{
         \typeout{Install 'Times New Roman' or 'DejaVu Serif' font.}
       }
     }
   }
+  % DejaVu Serif is compatible with texready and Times New Roman is incompatible!
 
   %\ExplSyntaxOn
   %\cs_set_eq:NN
@@ -168,8 +170,14 @@
   %\ExplSyntaxOff
   \setdigitfont[Scale=1.05]{Yas} % Purpose: To have a zero digit as an empty circle
 
-  \defpersianfont\nastaliqXL[Scale=2.0]{IranNastaliq}
-  \defpersianfont\nastaliq[Scale=1.0]{IranNastaliq}
+  \IfFontExistsTF{IranNastaliq}{ % Use IranNastaliq font if exist
+    \defpersianfont\nastaliqXL[Scale=2.0]{IranNastaliq}
+    \defpersianfont\nastaliq[Scale=1.0]{IranNastaliq}
+  }{
+    \defpersianfont\nastaliqXL[Scale=1.7]{Titr}
+    \defpersianfont\nastaliq[Scale=1.0]{Titr}
+  }
+  % Tirt font is compatible with texready and IranNastaliq is incompatible!
 
   \typeout{Configuring the page style and setting the page numbering to 'adadi'.}
   \pagestyle{plain} % Include page numbers in the document
@@ -179,6 +187,10 @@
     \setlength{\parskip}{10pt} % Adjust the space between paragraphs
     \setlength{\parindent}{0pt} % Adjust the space at the begining of paragraphs
     \setstretch{1.2} % Space between lines
+    \setlength{\skip\footins}{14pt} % Adjust the Vertical space before foolnote rule. Default is 12.8pt
+%    \renewcommand\small{ % Adjust \small font size
+%      \@setfontsize\small{11pt}{12pt}%
+%    }
 
     \typeout{Generating the front matter of the thesis.}
     \@makefrontmatter
@@ -192,7 +204,7 @@
     \fancyhf{} % Clear all default header and footer settings
     \fancyhead[OL,ER]{\thepage} % Page number on the outer side of pages (OL: Odd Left, ER: Even Right)
     \fancyhead[OR]{\leftmark} % Chapter title on odd pages (OR: Odd Right)
-    \fancyhead[EL]{\@title} % Thesis title on even pages (EL: Even Left)
+    \fancyhead[EL]{\@farsishorttitle} % Thesis short title on even pages (EL: Even Left)
   }
 
   \AtEndDocument{ % Make the end matter of thesis
@@ -263,6 +275,7 @@
 \newcommand{\@farsisubfield}{}
 \newcommand{\@farsisubtitle}{}
 \newcommand{\@farsisubsubtitle}{}
+\newcommand{\@farsishorttitle}{}
 \newcommand{\@farsidegree}{\ifproposal پیشنهاد پروژهٔ
                            \else \ifphd رسالهٔ
                                  \else \ifmaster پایان‌نامهٔ
@@ -350,6 +363,9 @@
 }
 \renewcommand{\title}[2]{\renewcommand{\@latintitle}{#1}
                          \renewcommand{\@title}{#2}
+                         \ifthenelse{\equal{\@farsishorttitle}{}}{ % Default value of the short title is main title.
+                             \renewcommand{\@farsishorttitle}{#2}
+                         }{}
 }
 \newcommand{\subtitle}[2]{\renewcommand{\@latinsubtitle}{#1}
                           \renewcommand{\@farsisubtitle}{#2}
@@ -361,6 +377,7 @@
                              \ifthenelse{\equal{#1}{}}{}{\latinsubsubtitleexisttrue}
                              \ifthenelse{\equal{#2}{}}{}{\farsisubsubtitleexisttrue}
 }
+\newcommand{\shorttitle}[1]{\renewcommand{\@farsishorttitle}{#1}}
 \newcommand{\thesis}{\ifproposal پیشنهاد پروژه% Don't remove comment and don't add any space to the following lines!
 \else \ifphd رساله%
 \else \ifmaster پایان‌نامه%
@@ -436,7 +453,7 @@
 }
 \newcommand{\committeemember}[6]{ % Add a member of review committee
    \g@addto@macro\@farsicommittee{
-     {\large #4} (#5)\\[-0.5ex]\hline
+     {\large #4} {\small(#5)}\\[-0.5ex]\hline
      \textbf{\scriptsize #6}\\[3ex]
    }
    \g@addto@macro\@latincommittee{
@@ -514,7 +531,7 @@
     % List of supervisor(s) and advisor(s)
     \begin{tabular}{rr}
         \ifmultisupervisor
-          \textbf{اساتید راهنما:}
+          \textbf{استادان راهنما:}
         \else
           \textbf{استاد راهنما:}
         \fi & \@farsisupervisor \\
@@ -537,7 +554,7 @@
 \newcommand{\@makelatintitlepage}{
   \typeout{Generate the latin title page.}
   \thispagestyle{empty}
-  \begin{titlepage}\begin{center}\begin{latin}    
+  \begin{titlepage}\begin{center}\begin{latin}
     % logo
     \large\includegraphics[width=7cm]{logo-en.eps}\\[0.5em]
     % department
@@ -639,15 +656,18 @@
     \phantomsection % required if using hyperref
     \addcontentsline{toc}{section}{چکیده} % To add the abstract in the index.
     \begin{center}
-      \textbf{\large\@title
+      \scaletext{\textbf{
+        \@title
         \iffarsisubtitleexist
           \xspace\@farsisubtitle
         \fi
+      }}{\large}
         \iffarsisubsubtitleexist
-          \\\@farsisubsubtitle
-        \fi
-      }\\[4pt]
-      \large\textbf{\@author}\\[8pt]
+          \\\scaletext{\textbf{
+            \@farsisubsubtitle
+          }}{\small}
+        \fi\\[4pt]
+      \textbf{\normalsize\@author}\\[8pt]
     \end{center}
     %\@oldabstract
     \@farsiabstract
@@ -664,15 +684,18 @@
     \phantomsection % required if using hyperref
     \addcontentsline{toc}{section}{Abstract} % To add the abstract in the index.
     \begin{center}
-      \textbf{\large\@latintitle
+      \scaletext{\textbf{
+        \@latintitle
         \iflatinsubtitleexist
           \xspace\@latinsubtitle
         \fi
+      }}{\large}
         \iflatinsubsubtitleexist
-          \\\@latinsubsubtitle
-        \fi
-      }\\[4pt]
-      \large\textbf{\@latinauthor}\\[8pt]
+          \\\scaletext{\textbf{
+            \@latinsubsubtitle
+          }}{\small}
+        \fi\\[4pt]
+      \textbf{\normalsize\@latinauthor}\\[8pt]
     \end{center}
     %\@oldabstract
     \@latinabstract
@@ -737,7 +760,7 @@
 برای تحقیق اصالت این پایان‌نامه
 \fi\fi
 با آموزش دانشگاه تحصیلات تکمیلی علوم‌پایه زنجان
-به آدرس پستی زنجان، گاوازنگ، بلوار پروفسور یوسف ثبوتی، 
+به آدرس پستی زنجان، گاوازنگ، بلوار پروفسور یوسف ثبوتی،
 زنجان
 $45137-66731$،
 ایران یا پست الکترونیک
@@ -766,15 +789,18 @@ $45137-66731$،
 \newcommand{\@farsiapprovalpage}{
     \typeout{Generate the Farsi approval page.}
     \begin{center} % Title and author
-      \textbf{\large\@title
+      \scaletext{\textbf{
+        \@title
         \iffarsisubtitleexist
           \xspace\@farsisubtitle
         \fi
+      }}{\large}
         \iffarsisubsubtitleexist
-          \\ \@farsisubsubtitle
-        \fi
-      }\\[4pt]
-      \large\textbf{\@author}\\[8pt]
+          \\\scaletext{\textbf{
+            \@farsisubsubtitle
+          }}{\small}
+        \fi\\[4pt]
+      \textbf{\normalsize\@author}\\[8pt]
     \end{center}
     \onehalfspacing
 
@@ -786,7 +812,7 @@ $45137-66731$،
     \vspace{0.5in}
 
     \setstretch{1}
-    \noindent\small
+    \noindent
     \begin{tabularx}{\textwidth}{X}
       \@farsicommittee
     \end{tabularx}
@@ -806,15 +832,18 @@ $45137-66731$،
   \typeout{Generate the latin approval page.}
   \begin{latin}
     \begin{center} % Title and author
-      \textbf{\large\@latintitle
+      \scaletext{\textbf{
+        \@latintitle
         \iflatinsubtitleexist
           \xspace\@latinsubtitle
         \fi
+      }}{\large}
         \iflatinsubsubtitleexist
-          \\\@latinsubsubtitle
-        \fi
-      }\\[4pt]
-      \large\textbf{\@latinauthor}\\[8pt]
+          \\\scaletext{\textbf{
+            \@latinsubsubtitle
+          }}{\small}
+        \fi\\[4pt]
+      \textbf{\normalsize\@latinauthor}\\[8pt]
     \end{center}
     \onehalfspacing
 
@@ -984,7 +1013,7 @@ $45137-66731$،
                                  \begin{tabular}{rr}
                                    \normalsize
                                    \ifmultisupervisor
-                                     \textbf{اساتید راهنما:}
+                                     \textbf{استادان راهنما:}
                                    \else
                                      \textbf{استاد راهنما:}
                                    \fi & \@farsisupervisor \\
@@ -1274,19 +1303,19 @@ $45137-66731$،
 
 %% Copyright © 2009–2025 by Institute for Advanced Studies in Basic Sciences (IASBS)
 %%
-%% This work is distributed under the LaTeX Project Public License (LPPL), 
-%% version 1.3c or later (at your choice). The latest version of this license is 
+%% This work is distributed under the LaTeX Project Public License (LPPL),
+%% version 1.3c or later (at your choice). The latest version of this license is
 %% available at: [http://www.latex-project.org/lppl.txt].
 %%
-%% The maintenance of this work, as defined under the LPPL maintenance status, 
+%% The maintenance of this work, as defined under the LPPL maintenance status,
 %% is carried out by M. D. Niry (m.d.niry@iasbs.ac.ir). This document class has been
-%% specifically designed for use at the IASBS. Modifications and adaptations for 
-%% use in other universities are permitted, provided that the original copyright 
+%% specifically designed for use at the IASBS. Modifications and adaptations for
+%% use in other universities are permitted, provided that the original copyright
 %% notice of the document class is retained.
 
-%% The goal of permitting these modifications is to contribute to the enhancement 
-%% of academic literature quality across universities in Iran. However, neither 
-%% M. D. Niry nor the IASBS assumes any responsibility for the outcomes resulting 
+%% The goal of permitting these modifications is to contribute to the enhancement
+%% of academic literature quality across universities in Iran. However, neither
+%% M. D. Niry nor the IASBS assumes any responsibility for the outcomes resulting
 %% from the use of this document class. All liability lies solely with the user.
 %%
 %%
