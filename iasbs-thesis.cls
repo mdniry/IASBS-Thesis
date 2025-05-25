@@ -1,4 +1,4 @@
-%% File: `iasbs-thesis.cls', Version 2.40
+%% File: `iasbs-thesis.cls', Version 2.41
 %%
 %% This document class is designed based of xepersian v25.0
 %% for academic theses at the Institute for Advanced Studies
@@ -23,7 +23,7 @@
 %%
 %%
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{iasbs-thesis}[2025/04/21 v2.40
+\ProvidesPackage{iasbs-thesis}[2025/05/19 v2.41
   IASBS Thesis document class in XeLaTeX]
 \DeclareOption*{ % Handle all options
   \PassOptionsToClass{\CurrentOption}{report}
@@ -61,6 +61,7 @@
 
 % Load required packages -----------------------------------
 \RequirePackage{graphicx}
+\RequirePackage{adjustbox}
 \RequirePackage{calc} % For performing basic calculations on lengths
 %\RequirePackage{float}
 \RequirePackage{fontspec}
@@ -138,6 +139,7 @@
 %  \renewcommand{\sectionmark}[1]{%
 %    \markright{\thesection.\ #1}}
 
+
 % Init the thesis document class ---------------------------
 \newcommand{\initstyle}{ % This must be the final command executed before the begin document.
   \typeout{Initialize the document class and thesis style.}
@@ -149,13 +151,16 @@
 
   \typeout{The XePersian package will load the fonts.}
   \settextfont[Scale=1.07]{XB Niloofar}[Script=Persian] % Use this line with the new version of xepersian (v23.3).
-  \IfFontExistsTF{DejaVu Serif}{ % Select Latin font
-    \setlatintextfont[Scale=1.03]{DejaVu Serif}}{
-    \IfFontExistsTF{Times New Roman}{
-      \setlatintextfont[Scale=1.05]{Times New Roman}}{
+  \IfFontExistsTF{Times New Roman}{ % Select Latin font
+    \setlatintextfont[Scale=1.05]{Times New Roman}}{
+    \IfFontExistsTF{Source Serif Pro}{
+      \setlatintextfont[Scale=1.06]{Source Serif Pro}}{
       \IfFontExistsTF{Liberation Serif}{
         \setlatintextfont[Scale=1.06]{Liberation Serif}}{
-        \typeout{Install 'Times New Roman' or 'DejaVu Serif' font.}
+        \IfFontExistsTF{DejaVu Serif}{
+          \setlatintextfont[Scale=1.03]{DejaVu Serif}}{
+          \typeout{Install 'Times New Roman' or 'Source Serif Prof' font.}
+        }
       }
     }
   }
@@ -177,7 +182,7 @@
     \defpersianfont\nastaliqXL[Scale=1.7]{Titr}
     \defpersianfont\nastaliq[Scale=1.0]{Titr}
   }
-  % Tirt font is compatible with texready and IranNastaliq is incompatible!
+  % Titr font is compatible with texready and IranNastaliq is incompatible!
 
   \typeout{Configuring the page style and setting the page numbering to 'adadi'.}
   \pagestyle{plain} % Include page numbers in the document
@@ -227,20 +232,67 @@
 }
 
 
-\newcommand{\scaletext}[2]{ % Scale the text to fit the text width (\textwidth), with a maximum font size limit.
-  \begingroup % Begin a local group to confine changes.
-    \setlength{\fboxsep}{0pt} % Remove any extra spacing around the text box.
+% Scale the text to fit the text width (\textwidth), with a maximum font size limit.
+% Syntax: \scaletext{text}{fontsize}
+%\newcommand{\scaletext}[2]{ 
+%  \begingroup % Begin a local group to confine changes.
+%    \setlength{\fboxsep}{0pt} % Remove any extra spacing around the text box.
+%
+%    \newlength{\@mylen} % Declare a new length variable.
+%    \settowidth{\@mylen}{#2 #1} % Calculate the width of the text.
+%
+%    \ifdim\textwidth<\@mylen % Check if the text width is smaller than the calculated width.
+%        \resizebox{\textwidth}{!}{#1} % Scale the text proportionally to fit the text width.
+%    \else
+%        {#2 #1} % Use the specified font size if the calculated width is within the limit.
+%    \fi
+%    \global\let\@mylen\undefined % Delete the length variable
+%  \endgroup % Close the local group and restore previous settings
+%}
 
-    \newlength{\@mylen} % Declare a new length variable.
-    \settowidth{\@mylen}{#2 #1} % Calculate the width of the text.
 
-    \ifdim\textwidth<\@mylen % Check if the text width is smaller than the calculated width.
-        \resizebox{\textwidth}{!}{#1} % Scale the text proportionally to fit the text width.
-    \else
-        {#2 #1} % Use the specified font size if the calculated width is within the limit.
-    \fi
-    \global\let\@mylen\undefined % Delete the length variable
-  \endgroup % Close the local group and restore previous settings
+% Print the compact form of title and author name at the header of the page.
+% Syntax \@makeheader{title}{subtitle}{subsubtitle}{author}
+\newcommand{\@makeheader}[4]{
+  \typeout{begin group}
+  \begin{center}
+    \begingroup % Begin a local group to confine changes.
+      % Declare a new length variable for each part of title.
+      \newlength{\sizeabc} % Declare a new length variable for the part a, b, and c of the title.
+      \settowidth{\sizeabc}{\textbf{\normalsize#1\xspace #2\xspace #3}}
+      \newlength{\sizeab} % Declare a new length variable for the part a and b of the title.
+      \settowidth{\sizeab}{\textbf{\normalsize#1\xspace #2}}
+      \newlength{\sizebc} % Declare a new length variable for the part b and c of the title.
+      \settowidth{\sizebc}{\textbf{\normalsize#2\xspace #3}}
+      \newlength{\sizea} % Declare a new length variable for the part a of the title.
+      \settowidth{\sizea}{\textbf{\normalsize#1}}
+      \newlength{\sizeb} % Declare a new length variable for the part b of the title.
+      \settowidth{\sizeb}{\textbf{\normalsize#2}}
+      \newlength{\sizec} % Declare a new length variable for the part c of the title.
+      \settowidth{\sizec}{\textbf{\normalsize#3}}
+    
+      \ifthenelse{\lengthtest{\textwidth<\sizea} \OR \lengthtest{\textwidth<\sizeb} \OR \lengthtest{\textwidth<\sizec} \OR \lengthtest{\textwidth>\sizeabc}}{
+        \textbf{\normalsize#1\xspace #2\xspace #3\\[4pt] #4}
+      }{ \ifthenelse{\lengthtest{\textwidth>\sizeab}}{
+           \textbf{\normalsize#1\xspace #2\\ #3\\[4pt] #4}
+         }{ \ifthenelse{\lengthtest{\textwidth>\sizebc}}{
+              \textbf{\normalsize#1\\ #2\xspace #3\\[4pt] #4}
+            }{
+              \textbf{\normalsize#1\\ #2\\ #3\\[4pt] #4}
+            }
+         }
+      }
+
+      % Delete the length variables
+      \global\let\sizeabc\undefined 
+      \global\let\sizeab\undefined 
+      \global\let\sizebc\undefined 
+      \global\let\sizea\undefined 
+      \global\let\sizeb\undefined 
+      \global\let\sizec\undefined 
+    \endgroup
+  \end{center}
+  \typeout{end group}
 }
 
 
@@ -275,6 +327,9 @@
 \newcommand{\@farsisubfield}{}
 \newcommand{\@farsisubtitle}{}
 \newcommand{\@farsisubsubtitle}{}
+\newcommand{\@titlesize}{\Huge}
+\newcommand{\@subtitlesize}{\huge}
+\newcommand{\@subsubtitlesize}{\LARGE}
 \newcommand{\@farsishorttitle}{}
 \newcommand{\@farsidegree}{\ifproposal پیشنهاد پروژهٔ
                            \else \ifphd رسالهٔ
@@ -361,21 +416,24 @@
                           \ifthenelse{\equal{#1}{}}{}{\latinsubfieldexisttrue}
                           \ifthenelse{\equal{#2}{}}{}{\farsisubfieldexisttrue}
 }
-\renewcommand{\title}[2]{\renewcommand{\@latintitle}{#1}
-                         \renewcommand{\@title}{#2}
+\renewcommand{\title}[3]{\renewcommand{\@titlesize}{#1}
+                         \renewcommand{\@latintitle}{#2}
+                         \renewcommand{\@title}{#3}
                          \ifthenelse{\equal{\@farsishorttitle}{}}{ % Default value of the short title is main title.
-                             \renewcommand{\@farsishorttitle}{#2}
+                             \renewcommand{\@farsishorttitle}{#3}
                          }{}
 }
-\newcommand{\subtitle}[2]{\renewcommand{\@latinsubtitle}{#1}
-                          \renewcommand{\@farsisubtitle}{#2}
-                          \ifthenelse{\equal{#1}{}}{}{\latinsubtitleexisttrue}
-                          \ifthenelse{\equal{#2}{}}{}{\farsisubtitleexisttrue}
+\newcommand{\subtitle}[3]{\renewcommand{\@subtitlesize}{#1}
+                          \renewcommand{\@latinsubtitle}{#2}
+                          \renewcommand{\@farsisubtitle}{#3}
+                          \ifthenelse{\equal{#2}{}}{}{\latinsubtitleexisttrue}
+                          \ifthenelse{\equal{#3}{}}{}{\farsisubtitleexisttrue}
 }
-\newcommand{\subsubtitle}[2]{\renewcommand{\@latinsubsubtitle}{#1}
-                             \renewcommand{\@farsisubsubtitle}{#2}
-                             \ifthenelse{\equal{#1}{}}{}{\latinsubsubtitleexisttrue}
-                             \ifthenelse{\equal{#2}{}}{}{\farsisubsubtitleexisttrue}
+\newcommand{\subsubtitle}[3]{\renewcommand{\@subsubtitlesize}{#1}
+                             \renewcommand{\@latinsubsubtitle}{#2}
+                             \renewcommand{\@farsisubsubtitle}{#3}
+                             \ifthenelse{\equal{#2}{}}{}{\latinsubsubtitleexisttrue}
+                             \ifthenelse{\equal{#3}{}}{}{\farsisubsubtitleexisttrue}
 }
 \newcommand{\shorttitle}[1]{\renewcommand{\@farsishorttitle}{#1}}
 \newcommand{\thesis}{\ifproposal پیشنهاد پروژه% Don't remove comment and don't add any space to the following lines!
@@ -453,11 +511,11 @@
 }
 \newcommand{\committeemember}[6]{ % Add a member of review committee
    \g@addto@macro\@farsicommittee{
-     {\large #4} {\small(#5)}\\[-0.5ex]\hline
+     {\large #4} {\small(#5)}\\[-0.15ex]\hline
      \textbf{\scriptsize #6}\\[3ex]
    }
    \g@addto@macro\@latincommittee{
-     {\large #1} (#2)\\[-0.5ex]\hline
+     {\large #1} (#2)\\[-0.25ex]\hline
      \textbf{\scriptsize #3}\\[3ex]
    }
 }
@@ -514,19 +572,23 @@
         \iffarsisubfieldexist
             \normalsize\textbf{\@farsisubfield}\\[2.5em]
         \fi
-    \fi
-    % title and subtitle
-    \Huge\scaletext{\textbf{\@title}}{\Huge}
-    \iffarsisubtitleexist
-        \\[4pt]\scaletext{\textbf{\@farsisubtitle}}{\LARGE}
-    \fi
-    \iffarsisubsubtitleexist
-        \\[-4pt]\scaletext{\textbf{\@farsisubsubtitle}}{\large}
-    \fi\\[2em]
-    % degree
-    \Large\textbf{\@farsidegree}{\hspace{-2mm}ِ}\\[1em]
-    % author
-    \textbf{\LARGE\@author}\\
+    \fi    
+    \adjustbox{width=\textwidth,keepaspectratio}{
+      \begin{tabular}{c}
+        % title and subtitle
+        \@titlesize\textbf{\@title}
+        \iffarsisubtitleexist
+            \\[4pt]\@subtitlesize\textbf{\@farsisubtitle}
+        \fi
+        \iffarsisubsubtitleexist
+            \\[2pt]\@subsubtitlesize\textbf{\@farsisubsubtitle}
+        \fi\\[2em]
+        % degree
+        \Large\textbf{\@farsidegree}\\[1em]
+        % author
+        \LARGE\textbf{\@author}
+      \end{tabular}
+    }    
     \vfill
     % List of supervisor(s) and advisor(s)
     \begin{tabular}{rr}
@@ -572,19 +634,23 @@
             \normalsize\textbf{\@latinsubfield}\\[2.5em]
         \fi
     \fi
-    % title and subtitle
-    \Huge\scaletext{\textbf{\@latintitle}}{\Huge}
-    \iflatinsubtitleexist
-        \\[-4pt]\scaletext{\textbf{\@latinsubtitle}}{\LARGE}
-    \fi
-    \iflatinsubsubtitleexist
-        \\[-8pt]\scaletext{\textbf{\@latinsubsubtitle}}{\large}
-    \fi\\[2em]
-    % degree
-    \Large\textbf{\@latindegree}\\[0.5em]
-    \textbf{by}\\[0.5em]
-    % author
-    \textbf{\LARGE\@latinauthor}\\
+    \adjustbox{width=\textwidth,keepaspectratio}{
+      \begin{tabular}{c}
+        % title and subtitle
+        \@titlesize\textbf{\@latintitle}
+        \iflatinsubtitleexist
+            \\[10pt]\@subtitlesize\textbf{\@latinsubtitle}
+        \fi
+        \iflatinsubsubtitleexist
+            \\[6pt]\@subsubtitlesize\textbf{\@latinsubsubtitle}
+        \fi\\[2em]
+        % degree
+        \Large\textbf{\@latindegree}\\[0.5em]
+        \Large\textbf{by}\\[0.5em]
+        % author
+        \LARGE\textbf{\@latinauthor}
+      \end{tabular}
+    }    
     \vfill
     % List of supervisor(s) and advisor(s)
     \begin{tabular}{ll}
@@ -655,25 +721,13 @@
     \typeout{Generate the Farsi abstract page.}
     \phantomsection % required if using hyperref
     \addcontentsline{toc}{section}{چکیده} % To add the abstract in the index.
-    \begin{center}
-      \scaletext{\textbf{
-        \@title
-        \iffarsisubtitleexist
-          \xspace\@farsisubtitle
-        \fi
-      }}{\large}
-        \iffarsisubsubtitleexist
-          \\\scaletext{\textbf{
-            \@farsisubsubtitle
-          }}{\small}
-        \fi\\[4pt]
-      \textbf{\normalsize\@author}\\[8pt]
-    \end{center}
-    %\@oldabstract
+    \@makeheader{\@title}
+               {\iffarsisubtitleexist\@farsisubtitle\fi}
+               {\iffarsisubsubtitleexist\@farsisubsubtitle\fi}
+               {\@author}
     \@farsiabstract
     \par\vspace{5mm}
     \noindent\textbf{واژه‌های کلیدی:} {\textit{\@farsikeywords}}
-    %\@endoldabstract
 }
 
 
@@ -683,25 +737,13 @@
   \begin{latin}
     \phantomsection % required if using hyperref
     \addcontentsline{toc}{section}{Abstract} % To add the abstract in the index.
-    \begin{center}
-      \scaletext{\textbf{
-        \@latintitle
-        \iflatinsubtitleexist
-          \xspace\@latinsubtitle
-        \fi
-      }}{\large}
-        \iflatinsubsubtitleexist
-          \\\scaletext{\textbf{
-            \@latinsubsubtitle
-          }}{\small}
-        \fi\\[4pt]
-      \textbf{\normalsize\@latinauthor}\\[8pt]
-    \end{center}
-    %\@oldabstract
+    \@makeheader{\@latintitle}
+               {\iflatinsubtitleexist\@latinsubtitle\fi}
+               {\iflatinsubsubtitleexist\@latinsubsubtitle\fi}
+               {\@latinauthor}
     \@latinabstract
     \par\vspace{5mm}
     \noindent\textbf{Keywords:} \textit{\@latinkeywords}
-    %\@endoldabstract
   \end{latin}
 }
 
@@ -719,12 +761,14 @@
     \begin{tabular}{rr}
       \hline\noalign{\smallskip}
 عنوان: &
-      \textbf{\@title
-        \iffarsisubtitleexist
-          \xspace\@farsisubtitle
-        \fi
-      }\\
-      & \textbf{\@farsisubsubtitle}\\
+      \textbf{\@title}\\
+      \iffarsisubtitleexist
+          & \textbf{\@farsisubtitle}\\
+      \fi
+      \iffarsisubsubtitleexist
+          & \textbf{\@farsisubsubtitle}\\
+      \fi
+      & \\
 نگارنده: &
       \textbf{\@author}\\[8pt]
 شماره دانشجویی: &
@@ -788,26 +832,16 @@ $45137-66731$،
 % Farsi signature papge ------------------------------------
 \newcommand{\@farsiapprovalpage}{
     \typeout{Generate the Farsi approval page.}
-    \begin{center} % Title and author
-      \scaletext{\textbf{
-        \@title
-        \iffarsisubtitleexist
-          \xspace\@farsisubtitle
-        \fi
-      }}{\large}
-        \iffarsisubsubtitleexist
-          \\\scaletext{\textbf{
-            \@farsisubsubtitle
-          }}{\small}
-        \fi\\[4pt]
-      \textbf{\normalsize\@author}\\[8pt]
-    \end{center}
+    \@makeheader{\@title}
+               {\iffarsisubtitleexist\@farsisubtitle\fi}
+               {\iffarsisubsubtitleexist\@farsisubsubtitle\fi}
+               {\@author}
     \onehalfspacing
 
     \ifphd
-این رساله به‌عنوان بخشی از مدارک لازم برای اخذ درجهٔ دکتری ارائه و در کمیته زیر بررسی و تایید شده است:
+این رساله به‌عنوان بخشی از مدارک لازم برای اخذ درجهٔ دکتری ارائه شده است و کمیته زیر آن را بررسی و تایید کرده‌اند:
     \else\ifmaster
-این پایان‌نامه به‌عنوان بخشی از مدارک لازم برای اخذ درجهٔ کارشناسی ارشد ارائه و در کمیته زیر بررسی و تایید شده است:
+این پایان‌نامه به‌عنوان بخشی از مدارک لازم برای اخذ درجهٔ کارشناسی ارشد ارائه شده است و کمیته زیر آن را بررسی و تایید کرده‌اند:
     \fi\fi
     \vspace{0.5in}
 
@@ -820,7 +854,7 @@ $45137-66731$،
     \vfill
 
     \noindent\textbf{
-      \large\@date\\[4pt]
+      \normalsize\@date\\[10pt]
       \@farsidepartment\\[4pt]
 دانشگاه تحصیلات تکمیلی علوم‌پایه زنجان
     }
@@ -831,20 +865,10 @@ $45137-66731$،
 \newcommand{\@latinapprovalpage}{
   \typeout{Generate the latin approval page.}
   \begin{latin}
-    \begin{center} % Title and author
-      \scaletext{\textbf{
-        \@latintitle
-        \iflatinsubtitleexist
-          \xspace\@latinsubtitle
-        \fi
-      }}{\large}
-        \iflatinsubsubtitleexist
-          \\\scaletext{\textbf{
-            \@latinsubsubtitle
-          }}{\small}
-        \fi\\[4pt]
-      \textbf{\normalsize\@latinauthor}\\[8pt]
-    \end{center}
+    \@makeheader{\@latintitle}
+               {\iflatinsubtitleexist\@latinsubtitle\fi}
+               {\iflatinsubsubtitleexist\@latinsubsubtitle\fi}
+               {\@latinauthor}
     \onehalfspacing
 
     \ifphd
@@ -863,9 +887,9 @@ $45137-66731$،
     \vfill
 
     \noindent\textbf{
-      \large\@latindate\\[4pt]
+      \normalsize\@latindate\\[10pt]
       \@latindepartment\\[4pt]
-       Institute for Advanced Studies in Basic Sciences (IASBS)
+      Institute for Advanced Studies in Basic Sciences (IASBS)
     }
   \end{latin}
 }
@@ -954,7 +978,7 @@ $45137-66731$،
   \newlength{\@ribbonlength}
 
   % The thickness of a page is 0.1 mm in the A3 cover, which is 0.071 mm on A4 size paper.
-  \setlength{\spineh}{\dimexpr 0.071mm * \ztotpages \relax}
+  \setlength{\spineh}{\dimexpr 0.051mm * \ztotpages \relax}
   \setlength{\spineyi}{124.5mm}
   \setlength{\spineyf}{\dimexpr \spineyi + \spineh \relax}
   \setlength{\coverheight}{\dimexpr 249mm + \spineh \relax}
@@ -989,21 +1013,20 @@ $45137-66731$،
   % Farsi-side of the cover
   \put(136mm,\farsisidey)     {\color{black}\rotatebox{90}{
                                \begin{minipage}{96.5mm}
-                                 \raggedleft%
-                                 % title and subtitle
-                                 \scaletext{\textbf{\@title}}{\Large}
-                                 \iffarsisubtitleexist
-                                   \\[4pt]\scaletext{\textbf{\@farsisubtitle}}{\large}
-                                   \iffarsisubsubtitleexist
-                                     \\[2pt]\scaletext{\textbf{\@farsisubsubtitle}}{\large}\\[1em]
-                                   \else
-                                     \\[1em]
-                                   \fi
-                                 \else
-                                   \\[1em]
-                                 \fi
-                                 % degree + author
-                                 \textbf{\normalsize\@farsidegree{\hspace{-1mm}ِ} \@author}
+                                 \adjustbox{width=\textwidth,keepaspectratio}{
+                                   \begin{tabular}{r}
+                                     % title and subtitle
+                                     \@titlesize\textbf{\@title}
+                                     \iffarsisubtitleexist
+                                       \\[6pt]\@subtitlesize\textbf{\@farsisubtitle}
+                                     \fi
+                                     \iffarsisubsubtitleexist
+                                       \\[4pt]\@subsubtitlesize\textbf{\@farsisubsubtitle}
+                                     \fi\\[1.5em]
+                                     % degree + author
+                                     \LARGE\textbf{~\@farsidegree{\hspace{-1mm}ِ} \@author}
+                                   \end{tabular}
+                                 }    
                                \end{minipage}
                               }}
   \put(55mm,\farsisidey)      {\color{black}\rotatebox{90}{
@@ -1031,7 +1054,7 @@ $45137-66731$،
   \put(16.5mm,\farsisidey)    {\color{black}\rotatebox{90}{
                                \begin{minipage}{96.5mm}
                                  \raggedleft\small
-                                 \includegraphics[width=60mm]{logo-fa.eps}\\[3.2ex]
+                                 \includegraphics[height=21mm]{logo-fa.eps}\\[3.2ex]
                                  \@farsidepartment،\hfill\@date
                                \end{minipage}
                               }}
@@ -1039,25 +1062,24 @@ $45137-66731$،
   \put(136mm,\latinsidey)     {\color{black}\rotatebox{90}{
                                  \begin{minipage}{96.5mm}
                                    \begin{latin}
-                                     \raggedright
-                                     % title and subtitle
-                                     \scaletext{\textbf{\@latintitle}}{\Large}
-                                     \iflatinsubtitleexist
-                                         \\[2pt]\scaletext{\textbf{\@latinsubtitle}}{\large}
-                                         \iflatinsubsubtitleexist
-                                             \\[2pt]\scaletext{\textbf{\@latinsubsubtitle}}{\large}\\[1em]
-                                         \else
-                                             \\[1em]
+                                     \adjustbox{width=\textwidth,keepaspectratio}{
+                                       \begin{tabular}{l}
+                                         % title and subtitle
+                                         \@titlesize\textbf{\@latintitle}
+                                         \iflatinsubtitleexist
+                                           \\[10pt]\@subtitlesize\textbf{\@latinsubtitle}
                                          \fi
-                                     \else
-                                         \\[1em]
-                                     \fi
-                                     % degree + author
-                                     \textbf{\normalsize\@latindegree by \@latinauthor}
+                                         \iflatinsubsubtitleexist
+                                           \\[6pt]\@subsubtitlesize\textbf{\@latinsubsubtitle}
+                                         \fi\\[1.5em]
+                                         % degree + author
+                                         \LARGE\textbf{\@latindegree by \@latinauthor}
+                                       \end{tabular}
+                                     }    
                                    \end{latin}
                                  \end{minipage}
                               }}
-  \put(55mm,138mm)            {\color{black}\rotatebox{90}{
+  \put(55mm,\latinsidey)      {\color{black}\rotatebox{90}{
                                 \begin{minipage}{96mm}
                                \begin{latin}
                                  \raggedright
@@ -1081,11 +1103,11 @@ $45137-66731$،
                                \end{latin}
                                \end{minipage}
                               }}
-  \put(16.5mm,138mm)          {\color{black}\rotatebox{90}{
+  \put(16.5mm,\latinsidey)    {\color{black}\rotatebox{90}{
                                 \begin{minipage}{96mm}
                                 \begin{latin}
                                   \raggedright\small
-                                  \includegraphics[width=60mm]{logo-en.eps}\\[3.2ex]
+                                  \includegraphics[height=21mm]{logo-en.eps}\\[3.2ex]
                                   \@latindepartment,\hfill\@latindate
                                 \end{latin}
                                 \end{minipage}
@@ -1093,14 +1115,16 @@ $45137-66731$،
   % Spine
   \put(26mm,\spineyi)         {\color{black} % date
                                 \begin{minipage}[c][\spineh][s]{110mm}
-                                  \ifthenelse{\ztotpages > 80}{\small}{\scriptsize}
+                                  \ifthenelse{\ztotpages > 78}{\scriptsize}{\tiny}
+                                  \ifthenelse{\ztotpages > 108}{\small}{\scriptsize}
                                   \raggedleft
                                   \@date
                                 \end{minipage}
                               }
   \put(56mm,\spineyi)         {\color{black} % author + title
                                 \begin{minipage}[c][\spineh][s]{110mm}
-                                  \ifthenelse{\ztotpages > 80}{\small}{\scriptsize}
+                                  \ifthenelse{\ztotpages > 78}{\scriptsize}{\tiny}
+                                  \ifthenelse{\ztotpages > 108}{\small}{\scriptsize}
                                   \raggedleft
                                   \@author\hfill\@title
                                   \iffarsisubtitleexist
